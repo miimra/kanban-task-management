@@ -1,18 +1,19 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import Board from "../components/Board";
+import { initialData } from '../data/initialData'
+import Switch from '../components/Switch';
 
 const Home: NextPage = () => {
   return (
     <div className={styles.container}>
-
+      <header className={styles.header}>
+        Kanban Board
+        {/* <Switch /> */}
+      </header>
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+        <Board data={initialData} />
       </main>
-
     </div>
   )
 }
