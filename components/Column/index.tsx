@@ -4,9 +4,6 @@ import { Droppable } from 'react-beautiful-dnd';
 import { IColumn, ICard } from "../../interfaces/interfaces";
 
 
-
-
-
 export default function Column({ column }: { column: IColumn }) {
 
   return (
