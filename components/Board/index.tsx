@@ -4,32 +4,20 @@ import dynamic from "next/dynamic";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { BoardContainer } from './styles';
 
-const Board = ({ data }: { data: IColumn[] }) => {
+const Board = ({ data, cardMoved }: { data: IColumn[] | undefined, cardMoved: any }) => {
     const Column = dynamic(import("../Column"));
     const [winReady, setwinReady] = useState(false);
-    const [columns, setColumns] = useState(data);
 
     const onDragEnd = (result: DropResult) => {
         const { destination, source, draggableId } = result;
-
-        if (!destination) return;
-
-        if (
-            destination.droppableId === source.droppableId &&
-            destination.index === source.index
-        ) return;
-
-        const sourceColumn: IColumn = columns.find(column => column.id === source.droppableId) as IColumn;
-        const destinationColumn: IColumn = columns.find(column => column.id === destination.droppableId) as IColumn;
-        const movingCard: ICard | undefined = columns.reduce((cards, column) => [...cards, ...column.cards], [] as Array<ICard>)
-            .find(x => x.id == draggableId);
-
-        if (movingCard) {
-            sourceColumn.cards.splice(source.index, 1)
-            destinationColumn.cards.splice(destination.index, 0, movingCard);
-            setColumns([...columns])
+        const eventData = {
+            sourceColumnId: source.droppableId,
+            destinationColumnId: destination?.droppableId,
+            cardId: draggableId,
+            destinationCardIndex: destination?.index,
+            sourceCardIndex: source.index,
         }
-
+        cardMoved(eventData);
     }
 
     useEffect(() => {
@@ -40,7 +28,7 @@ const Board = ({ data }: { data: IColumn[] }) => {
         <BoardContainer>
             <DragDropContext onDragEnd={onDragEnd}>
                 {winReady ?
-                    data.map((column: IColumn) => <Column key={column.id} column={column} />) : null
+                    data?.map((column: IColumn) => <Column key={column.id} column={column} />) : null
                 }
             </DragDropContext>
         </BoardContainer>
