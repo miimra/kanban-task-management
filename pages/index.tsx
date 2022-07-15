@@ -1,34 +1,15 @@
 /** @jsxRuntime classic */
 /** @jsx jsx */
 import { useEffect, useState } from 'react';
-import type { NextPage } from 'next'
-import styles from '../styles/Home.module.css'
+import type { NextPage } from 'next';
+import styles from '../styles/Home.module.css';
+import { darkTheme, lightTheme } from '../styles/themes';
 import Board from "../components/Board";
 import Switch from '../components/Switch';
 import { jsx, ThemeProvider } from '@emotion/react';
 import { supabase } from '../utils/supabaseClient';
 import { IColumn, ICard } from '../interfaces/interfaces';
 
-
-export const darkTheme = {
-  color: {
-    primary: '#f7f7f7',
-    darkIndigo: '#071530',
-    paleGray: '#252525',
-    background: '#1e1e1e',
-    text: '#ffffff',
-  },
-};
-
-export const lightTheme = {
-  color: {
-    primary: '#444444',
-    darkIndigo: '#071530',
-    paleGray: '#f2f2f2',
-    background: '#fefefe',
-    text: '#252525',
-  },
-};
 
 interface IBoardData {
   columns: IColumn[];
