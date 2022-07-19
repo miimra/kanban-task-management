@@ -368,6 +368,15 @@
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.0.3.tgz#21347676c45b73aec3ed0107613e5b963bc86fa5"
   integrity sha512-Z0harJHTf051ICqyqy1BE/3B1BGKAyKD6di4x/BW2HfAkNS3c3RoLV3eZMLwcw1A+sRay634ZfBqlWJafizZog==
 
+"@tanstack/react-query@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-4.0.3.tgz#2b5534965f6f79eac79bdb503f644acb3c0d311e"
+  integrity sha512-8Fg0KaZEki2VvksWD8RhEmUVrBWE10Vi9MiWrDtVc/Wy6u8Wzf+Qy7SzuUZNvMSZ7gbWZR9BdSDqlAFz4jg7mw==
+  dependencies:
+    "@tanstack/query-core" "^4.0.0-beta.1"
+    "@types/use-sync-external-store" "^0.0.3"
+    use-sync-external-store "^1.2.0"
+
 "@types/hoist-non-react-statics@^3.3.0":
   version "3.3.1"
   resolved "https://registry.npmjs.org/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.1.tgz"

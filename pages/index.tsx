@@ -2,7 +2,7 @@
 /** @jsx jsx */
 import { useState } from 'react';
 import type { NextPage } from 'next';
-import { useQuery, useMutation } from 'react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import styles from '../styles/Home.module.css';
 import { darkTheme, lightTheme } from '../styles/themes';
 import Board from "../components/Board";
@@ -32,13 +32,13 @@ const Home: NextPage = () => {
     return data[0].data as IBoardData;
   }
 
-  const { data: boardData } = useQuery('board-data', () => fetchBoardData())
+  const { data: boardData } = useQuery(['boardData'], () => fetchBoardData())
 
-  const updateBoard = useMutation(async (boardData) => {
+  const updateBoard = useMutation(async (boardData: IBoardData) => {
     await supabase
       .from('boards')
       .update({ data: boardData })
-      .match({ id: 1 })
+      .match({ id: 1 })    
   })
 
   function toggleTheme(): void {
@@ -67,7 +67,7 @@ const Home: NextPage = () => {
     if (movingCard) {
       sourceColumn.cards.splice(sourceCardIndex, 1)
       destinationColumn.cards.splice(destinationCardIndex, 0, movingCard);
-      updateBoard.mutate(boardData);
+      boardData && updateBoard.mutate(boardData);
     }
   }
 
