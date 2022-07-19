@@ -1,7 +1,8 @@
 /** @jsxRuntime classic */
 /** @jsx jsx */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import { useQuery, useMutation } from '@tanstack/react-query'
 import styles from '../styles/Home.module.css';
 import { darkTheme, lightTheme } from '../styles/themes';
@@ -11,13 +12,33 @@ import { jsx, ThemeProvider } from '@emotion/react';
 import { supabase } from '../utils/supabaseClient';
 import { IColumn, ICard } from '../interfaces/interfaces';
 
-
 interface IBoardData {
   columns: IColumn[];
 }
 
 const Home: NextPage = () => {
   const [checked, setChecked] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const session = supabase.auth.session();
+    if (!session) {
+      router.push({
+        pathname: '/login',
+      })
+    }
+    else
+      setLoading(false);
+  }, [])
+
+  const signOut = () => {
+    supabase.auth.signOut()
+    router.push({
+      pathname: '/login',
+      query: { returnUrl: router.asPath }
+    });
+  }
 
   const fetchBoardData = async () => {
     const { data, error } = await supabase
@@ -38,7 +59,7 @@ const Home: NextPage = () => {
     await supabase
       .from('boards')
       .update({ data: boardData })
-      .match({ id: 1 })    
+      .match({ id: 1 })
   })
 
   function toggleTheme(): void {
@@ -72,21 +93,28 @@ const Home: NextPage = () => {
   }
 
   return (
-    <ThemeProvider theme={checked ? darkTheme : lightTheme}>
-      <div className={styles.container}
-        css={(theme: any) => ({
-          color: theme.color.primary,
-          background: theme.color.background
-        })}>
-        <header className={styles.header}>
-          Kanban Board
-          <Switch onChange={toggleTheme} />
-        </header>
-        <main className={styles.main}>
-          <Board data={boardData?.columns} cardMoved={cardMovedHandler} />
-        </main>
-      </div>
-    </ThemeProvider>
+    <div>
+      {!loading ?
+        <ThemeProvider theme={checked ? darkTheme : lightTheme}>
+          <div className={styles.container}
+            css={(theme: any) => ({
+              color: theme.color.primary,
+              background: theme.color.background
+            })}>
+            <header className={styles.header}>
+              Kanban Board
+              <Switch onChange={toggleTheme} />
+              <button onClick={() => signOut()}>
+                Sign out
+              </button>
+            </header>
+            <main className={styles.main}>
+              <Board data={boardData?.columns} cardMoved={cardMovedHandler} />
+            </main>
+          </div>
+        </ThemeProvider>
+        : null}
+    </div>
   )
 }
 
