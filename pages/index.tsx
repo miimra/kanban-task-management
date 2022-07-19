@@ -1,8 +1,10 @@
 /** @jsxRuntime classic */
 /** @jsx jsx */
-import { useEffect, useState } from 'react';
-import type { NextPage } from 'next'
-import styles from '../styles/Home.module.css'
+import { useState } from 'react';
+import type { NextPage } from 'next';
+import { useQuery, useMutation } from 'react-query'
+import styles from '../styles/Home.module.css';
+import { darkTheme, lightTheme } from '../styles/themes';
 import Board from "../components/Board";
 import Switch from '../components/Switch';
 import { jsx, ThemeProvider } from '@emotion/react';
@@ -10,65 +12,37 @@ import { supabase } from '../utils/supabaseClient';
 import { IColumn, ICard } from '../interfaces/interfaces';
 
 
-export const darkTheme = {
-  color: {
-    primary: '#f7f7f7',
-    darkIndigo: '#071530',
-    paleGray: '#252525',
-    background: '#1e1e1e',
-    text: '#ffffff',
-  },
-};
-
-export const lightTheme = {
-  color: {
-    primary: '#444444',
-    darkIndigo: '#071530',
-    paleGray: '#f2f2f2',
-    background: '#fefefe',
-    text: '#252525',
-  },
-};
-
 interface IBoardData {
   columns: IColumn[];
 }
 
 const Home: NextPage = () => {
   const [checked, setChecked] = useState(false);
-  const [boardData, setBoardData] = useState<IBoardData | undefined>(undefined);
 
-  async function getData() {
-    try {
-      let { data, error } = await supabase
-        .from('boards')
-        .select('data')
-        .eq("id", 1)
-        .limit(1)
-
-      if (error) {
-        throw error
-      }
-
-      if (data) {
-        setBoardData(data[0].data as IBoardData)
-      }
-    } catch (error: any) {
-      console.log(error.message)
-    } finally {
-    }
-  }
-
-  function toggleTheme(): void {
-    setChecked(!checked);
-  }
-
-  const updateBoard = async () => {
+  const fetchBoardData = async () => {
     const { data, error } = await supabase
+      .from('boards')
+      .select('data')
+      .eq("id", 1)
+      .limit(1)
+
+    if (error) {
+      throw new Error(`${error.message}: ${error.details}`);
+    }
+    return data[0].data as IBoardData;
+  }
+
+  const { data: boardData } = useQuery('board-data', () => fetchBoardData())
+
+  const updateBoard = useMutation(async (boardData) => {
+    await supabase
       .from('boards')
       .update({ data: boardData })
       .match({ id: 1 })
+  })
 
+  function toggleTheme(): void {
+    setChecked(!checked);
   }
 
   const cardMovedHandler = (eventData: any) => {
@@ -93,14 +67,9 @@ const Home: NextPage = () => {
     if (movingCard) {
       sourceColumn.cards.splice(sourceCardIndex, 1)
       destinationColumn.cards.splice(destinationCardIndex, 0, movingCard);
-      setBoardData({ columns: boardData!.columns });
-      updateBoard();
+      updateBoard.mutate(boardData);
     }
   }
-
-  useEffect(() => {
-    getData();
-  }, [])
 
   return (
     <ThemeProvider theme={checked ? darkTheme : lightTheme}>
