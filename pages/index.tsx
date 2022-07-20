@@ -18,26 +18,25 @@ interface IBoardData {
 
 const Home: NextPage = () => {
   const [checked, setChecked] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<any>(null);
   const router = useRouter();
 
   useEffect(() => {
-    const session = supabase.auth.session();
-    if (!session) {
-      router.push({
-        pathname: '/login',
-      })
-    }
-    else
-      setLoading(false);
+    fetchProfile()
   }, [])
 
-  const signOut = () => {
-    supabase.auth.signOut()
-    router.push({
-      pathname: '/login',
-      query: { returnUrl: router.asPath }
-    });
+  async function fetchProfile() {
+    const profileData = await supabase.auth.user()
+    if (!profileData) {
+      router.push('/login')
+    } else {
+      setProfile(profileData)
+    }
+  }
+
+  async function signOut() {
+    await supabase.auth.signOut()
+    router.push('/login')
   }
 
   const fetchBoardData = async () => {
@@ -92,28 +91,27 @@ const Home: NextPage = () => {
     }
   }
 
+  if (!profile) return null;
   return (
     <div>
-      {!loading ?
-        <ThemeProvider theme={checked ? darkTheme : lightTheme}>
-          <div className={styles.container}
-            css={(theme: any) => ({
-              color: theme.color.primary,
-              background: theme.color.background
-            })}>
-            <header className={styles.header}>
-              Kanban Board
-              <Switch onChange={toggleTheme} />
-              <button onClick={() => signOut()}>
-                Sign out
-              </button>
-            </header>
-            <main className={styles.main}>
-              <Board data={boardData?.columns} cardMoved={cardMovedHandler} />
-            </main>
-          </div>
-        </ThemeProvider>
-        : null}
+      <ThemeProvider theme={checked ? darkTheme : lightTheme}>
+        <div className={styles.container}
+          css={(theme: any) => ({
+            color: theme.color.primary,
+            background: theme.color.background
+          })}>
+          <header className={styles.header}>
+            Kanban Board
+            <Switch onChange={toggleTheme} />
+            <button onClick={() => signOut()}>
+              Sign out
+            </button>
+          </header>
+          <main className={styles.main}>
+            <Board data={boardData?.columns} cardMoved={cardMovedHandler} />
+          </main>
+        </div>
+      </ThemeProvider>
     </div>
   )
 }
