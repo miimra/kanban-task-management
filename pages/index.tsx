@@ -102,10 +102,12 @@ const Home: NextPage = () => {
           })}>
           <header className={styles.header}>
             Kanban Board
-            <Switch onChange={toggleTheme} />
-            <button onClick={() => signOut()}>
-              Sign out
-            </button>
+            <div className={styles.rightSide}>
+              <Switch onChange={toggleTheme} />
+              <button className={styles.signOutBtn} onClick={() => signOut()}>
+                Sign out
+              </button>
+            </div>
           </header>
           <main className={styles.main}>
             <Board data={boardData?.columns} cardMoved={cardMovedHandler} />

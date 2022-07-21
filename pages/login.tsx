@@ -6,8 +6,10 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleLogin = async (email: any) => {
+        setLoading(true);
         try {
             const { error } = await supabase.auth.signIn({ email });
             if (error) throw error;
@@ -15,6 +17,7 @@ const Login = () => {
         } catch (error: any) {
             error.message ? setError(error.message) : setError(error.error_description)
         }
+        setLoading(false);
     };
 
     return (
@@ -31,13 +34,13 @@ const Login = () => {
                         onChange={(e) => setEmail(e.target.value)}
                     />
                     <button
-                        className={styles.button}
+                        className={`${styles.button} ${loading ? styles.loadingBtn : ''}`}
                         onClick={(e) => {
                             e.preventDefault();
                             handleLogin(email);
                         }}
                     >
-                        <span>Send link</span>
+                        <span>{loading ? 'Loading' : 'Send link'}</span>
                     </button>
                 </div>
             </div>

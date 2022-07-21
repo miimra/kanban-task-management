@@ -31,6 +31,10 @@
   font-size: 1rem;
 }
 
+.loadingBtn {
+  opacity: 90%;
+}
+
 .success {
   font-size: 0.7rem;
   color: #2da44e;

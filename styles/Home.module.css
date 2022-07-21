@@ -9,6 +9,21 @@
   align-items: center;
 }
 
+.rightSide {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.signOutBtn {
+  background: transparent;
+  border: none;
+  text-decoration: underline;
+  margin-top: 0.3rem;
+  cursor: pointer;
+  color: #2da44e;
+}
+
 .main {
   min-height: 100vh;
   padding: 2rem 0;
