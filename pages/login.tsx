@@ -9,15 +9,17 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
 
     const handleLogin = async (email: any) => {
-        setLoading(true);
-        try {
-            const { error } = await supabase.auth.signIn({ email });
-            if (error) throw error;
-            setSuccess('Check your email for the login link!');
-        } catch (error: any) {
-            error.message ? setError(error.message) : setError(error.error_description)
+        if (!loading) {
+            setLoading(true);
+            try {
+                const { error } = await supabase.auth.signIn({ email });
+                if (error) throw error;
+                setSuccess('Check your email for the login link!');
+            } catch (error: any) {
+                error.message ? setError(error.message) : setError(error.error_description)
+            }
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     return (
